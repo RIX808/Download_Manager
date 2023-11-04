@@ -1,7 +1,7 @@
-# Download Manager 1.0
+# Python Download Manager 1.0
 # Modified from https://github.com/tuomaskivioja/File-Downloads-Automator/blob/main/fileAutomator.py
-# 08/11/2022
-# Official first version.
+# 2023-11-03
+# Python Version 3.12.0
 
 from os import scandir, rename
 from os.path import splitext, exists, join
@@ -15,17 +15,17 @@ from watchdog.events import FileSystemEventHandler
 
 
 # Folders
-source_dir = "c:\\Users\\Mike\\Downloads"
-dest_dir_music = "c:\\Users\\Mike\\Downloads\\MUSIC"
-dest_dir_video = "c:\\Users\\Mike\\Downloads\\VIDEOS"
-dest_dir_image = "c:\\Users\\Mike\\Downloads\\IMAGES"
-dest_dir_documents = "c:\\Users\\Mike\\Downloads\\DOCS"
-dest_dir_emails = "c:\\Users\\Mike\\Downloads\\EMAILS"
-dest_dir_compression = "c:\\Users\\Mike\\Downloads\\COMPRESSED"
-dest_dir_exe = "c:\\Users\\Mike\\Downloads\\APPS_EXE"
-dest_dir_ico = "E:\\Dropbox\\PICTURES\\Folder_Icons"
-dest_dir_scripts = "c:\\Users\\Mike\\Downloads\\SCRIPTS"
-dest_dir_pyScripts = "E:\\Dropbox\\My Scripts\\python\\DEV\\Downloaded"
+source_dir = "c:\\Users\\miker\\Downloads"
+dest_dir_music = "c:\\Users\\miker\\Downloads\\MUSIC"
+dest_dir_video = "c:\\Users\\miker\\Downloads\\VIDEOS"
+dest_dir_image = "c:\\Users\\miker\\Downloads\\IMAGES"
+dest_dir_documents = "c:\\Users\\miker\\Downloads\\DOCS"
+dest_dir_emails = "c:\\Users\\miker\\Downloads\\EMAILS"
+dest_dir_compression = "c:\\Users\\miker\\Downloads\\COMPRESSED"
+dest_dir_exe = "c:\\Users\\miker\\Downloads\\APPS_EXE"
+dest_dir_ico = "E:\\PICTURES\\Folder_Icons"
+dest_dir_scripts = "c:\\Users\\miker\\Downloads\\SCRIPTS"
+dest_dir_pyScripts = "c:\\Users\\miker\\Downloads\\SCRIPTS"
 
 
 # ? supported image types
