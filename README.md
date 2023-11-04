@@ -1,5 +1,6 @@
 # Python Download Manager
 Download manager in Python 3.12.0.
+Originally modified from [File-Downloads-Automator](https://github.com/tuomaskivioja/File-Downloads-Automator/blob/main/fileAutomator.py)
 
 ## Required Modules
 [watchdog 3.0.0](https://pypi.org/project/watchdog/)

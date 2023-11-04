@@ -3,6 +3,7 @@
 # 2023-11-03
 # Python Version 3.12.0
 
+import os
 from os import scandir, rename
 from os.path import splitext, exists, join
 from shutil import move
@@ -13,19 +14,20 @@ import logging
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-
+# Create env variables to mask path names
+# create DLOADS env variable in Windows first!
+source_dir = os.environ.get('DLOADS')
 # Folders
-source_dir = "c:\\Users\\miker\\Downloads"
-dest_dir_music = "c:\\Users\\miker\\Downloads\\MUSIC"
-dest_dir_video = "c:\\Users\\miker\\Downloads\\VIDEOS"
-dest_dir_image = "c:\\Users\\miker\\Downloads\\IMAGES"
-dest_dir_documents = "c:\\Users\\miker\\Downloads\\DOCS"
-dest_dir_emails = "c:\\Users\\miker\\Downloads\\EMAILS"
-dest_dir_compression = "c:\\Users\\miker\\Downloads\\COMPRESSED"
-dest_dir_exe = "c:\\Users\\miker\\Downloads\\APPS_EXE"
-dest_dir_ico = "E:\\PICTURES\\Folder_Icons"
-dest_dir_scripts = "c:\\Users\\miker\\Downloads\\SCRIPTS"
-dest_dir_pyScripts = "c:\\Users\\miker\\Downloads\\SCRIPTS"
+dest_dir_music =            os.path.join(source_dir, 'MUSIC')           # Merge source dir with file folder to create path
+dest_dir_video =            os.path.join(source_dir, 'VIDEOS')          
+dest_dir_image =            os.path.join(source_dir, 'IMAGES')          
+dest_dir_documents =        os.path.join(source_dir, 'DOCS')            
+dest_dir_emails =           os.path.join(source_dir, 'EMAILS')          
+dest_dir_compression =      os.path.join(source_dir, 'COMPRESSED')      
+dest_dir_exe =              os.path.join(source_dir, 'APPS_EXE')        
+dest_dir_ico =              "E:\\PICTURES\\Folder_Icons"
+dest_dir_scripts =          os.path.join(source_dir, 'SCRIPTS')         
+dest_dir_pyScripts =        os.path.join(source_dir, 'SCRIPTS')         
 
 
 # ? supported image types
