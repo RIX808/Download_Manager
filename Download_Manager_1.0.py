@@ -8,17 +8,16 @@ from os import scandir, rename
 from os.path import splitext, exists, join
 from shutil import move
 from time import sleep
-
 import logging
-
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# Create env variables to mask path names
-# create DLOADS env variable in Windows first!
+# source_dir is the top level downloads folder.
+# create DLOADS(or whatever) env variable in Windows first!
 source_dir = os.environ.get('DLOADS')
-# Folders
-dest_dir_music =            os.path.join(source_dir, 'MUSIC')           # Merge source dir with file folder to create path
+
+# Folders that files will be moved to
+dest_dir_music =            os.path.join(source_dir, 'MUSIC')           # Merge source_dir with file folder. Script will create folder if does not exist.
 dest_dir_video =            os.path.join(source_dir, 'VIDEOS')          
 dest_dir_image =            os.path.join(source_dir, 'IMAGES')          
 dest_dir_documents =        os.path.join(source_dir, 'DOCS')            
@@ -26,75 +25,67 @@ dest_dir_emails =           os.path.join(source_dir, 'EMAILS')
 dest_dir_compression =      os.path.join(source_dir, 'COMPRESSED')      
 dest_dir_exe =              os.path.join(source_dir, 'APPS_EXE')        
 dest_dir_ico =              "E:\\PICTURES\\Folder_Icons"
-dest_dir_scripts =          os.path.join(source_dir, 'SCRIPTS')         
-dest_dir_pyScripts =        os.path.join(source_dir, 'SCRIPTS')         
+dest_dir_scripts =          os.path.join(source_dir, 'SCRIPTS')                
 
+# Supported extensions for files to be moved
+# IMAGE TYPES
+image_extensions = [".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi", ".png", ".gif", ".webp", ".tiff", ".tif", ".psd", ".raw", ".arw", ".cr2", ".nrw", ".k25", ".bmp", ".dib", ".heif", ".heic", ".ind", ".indd", ".indt", ".jp2", ".j2k", ".jpf", ".jpf", ".jpx", ".jpm", ".mj2", ".svg", ".svgz", ".ai", ".eps"]
 
-# ? supported image types
-image_extensions = [".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi", ".png", ".gif", 
-                    ".webp", ".tiff", ".tif", ".psd", ".raw", ".arw", ".cr2", ".nrw",
-                    ".k25", ".bmp", ".dib", ".heif", ".heic", ".ind", ".indd", ".indt", 
-                    ".jp2", ".j2k", ".jpf", ".jpf", ".jpx", ".jpm", ".mj2", ".svg", 
-                    ".svgz", ".ai", ".eps"]
+# VIDEO TYPES
+video_extensions = [".webm", ".mpg", ".mp2", ".mpeg", ".mpe", ".mpv", ".ogg",".mp4", ".mp4v", ".m4v", ".avi", ".wmv", ".mov", ".qt", ".flv", ".swf", ".avchd", ".mkv"]
 
-# ? supported Video types
-video_extensions = [".webm", ".mpg", ".mp2", ".mpeg", ".mpe", ".mpv", ".ogg",".mp4", 
-                    ".mp4v", ".m4v", ".avi", ".wmv", ".mov", ".qt", ".flv", ".swf", 
-                    ".avchd", ".mkv"]
-
-# ? supported Audio types
+# AUDIO TYPES
 audio_extensions = [".m4a", ".flac", "mp3", ".wav", ".wma", ".aac"]
 
-# ? supported Document types
-document_extensions = [".doc", ".docx", ".odt", ".pdf", ".xls", ".xlsx", ".ppt", ".pptx", 
-                       ".txt", ".pps"]
+# DOCUMENT TYPES
+document_extensions = [".doc", ".docx", ".odt", ".pdf", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".pps"]
 
-# ? Supported Email types
+# EMAIL TYPES
 email_extensions = [".eml", ".msg", ".ost", ".pst", ".vcf", ".emlx", ".email", ".oft"] 
 
-# ? Supported compression types
-compression_extensions = [".zip", ".7zip", ".rar", ".tar", ".zipx", ".ace", ".gz", ".iso", 
-                          ".lbr", ".sbx", ".mar", ".a", ".ar", ".br", ".bz2", ".cab", ".dmg", 
-                          ".tar.gz", ".tar.Z", ".tar.bz2", ".tbz2", ".tar.lz", ".tar.xz", ".txz",
-                          ".bin", ".app", ".pkg", ".z"]
+# COMPRESSION TYPES
+compression_extensions = [".zip", ".7zip", ".rar", ".tar", ".zipx", ".ace", ".gz", ".iso", ".lbr", ".sbx", ".mar", ".a", ".ar", ".br", ".bz2", ".cab", ".dmg", ".tar.gz", ".tar.Z", ".tar.bz2", ".tbz2", ".tar.lz", ".tar.xz", ".txz", ".bin", ".app", ".pkg", ".z"]
 
-# ? Supported executables 
+# EXECUTABLE TYPES 
 exe_extensions = [".exe", ".msi", ".deb", ".com"]
 
-# ? Supported icons
+# ICON TYPES
 icon_extensions = [".ico"]
 
-# Supported Script files
-script_extensions = [".ps1", ".ahk", ".bat", ".jar", ".gadget", 
-                  ".cgi", ".pl", ".wsf", ".apk", ".html", ".htm", ".js", ".css", ".asp", 
-                  ".aspx", ".jsp", ".rss"]
+# SCRIPT TYPES
+script_extensions = [".ps1", ".ahk", ".bat", ".jar", ".gadget", ".cgi", ".pl", ".wsf", ".apk", ".html", ".htm", ".js", ".css", ".asp", ".aspx", ".jsp", ".rss", ".py"]
 
-# Supported Script files
-pyscript_extensions = [".py"]
-
-# Make filename unique
+# Function to make filename unique if file with same name already exists in destination folder.
 def make_unique(dest, name):
-    filename, extension = splitext(name)
+    filename, extension = splitext(name)    # splits filename from extension
     counter = 1
-    # * IF FILE EXISTS, ADDS NUMBER TO THE END OF THE FILENAME
+
+    # Checks if file exists. If exists, increment name by 1.
     while exists(f"{dest}/{name}"):
         name = f"{filename}({str(counter)}){extension}"
         counter += 1
-
     return name
 
-# Moves files
+# Function to move files
 def move_file(dest, entry, name):
-    if exists(f"{dest}/{name}"):
-        unique_name = make_unique(dest, name)
-        oldName = join(dest, name)
-        newName = join(dest, unique_name)
-        rename(oldName, newName)
-    move(entry, dest)
+    # Check if dest exists, create it if not
+    if not os.path.exists(dest):
+        os.makedirs(dest)
 
+    # Check if a file with the same name already exists in dest
+    if os.path.exists(os.path.join(dest, name)):
+        unique_name = make_unique(dest, name)
+        old_name = os.path.join(dest, name)
+        new_name = os.path.join(dest, unique_name)
+        os.rename(old_name, new_name)
+
+    # Move the file to dest
+    move(entry, os.path.join(dest, name))
+
+# Run through source_dir for changed files. If found, run the 'on_modified' function.
 class MoverHandler(FileSystemEventHandler):
-    # ? THIS FUNCTION WILL RUN WHENEVER THERE IS A CHANGE IN "source_dir"
-    # ? .upper is for not missing out on files with uppercase extensions
+    # THIS FUNCTION WILL RUN WHENEVER THERE IS A CHANGE IN "source_dir"
+    # .upper is for not missing out on files with uppercase extensions
     def on_modified(self, event):
         with scandir(source_dir) as entries:
             for entry in entries:
@@ -108,7 +99,6 @@ class MoverHandler(FileSystemEventHandler):
                 self.check_exe_files(entry, name)
                 self.check_ico_files(entry, name)
                 self.check_script_files(entry, name)
-                self.check_pyscript_files(entry, name)
 
     def check_audio_files(self, entry, name):  # * Checks all Audio Files
         for audio_extension in audio_extensions:
@@ -162,13 +152,7 @@ class MoverHandler(FileSystemEventHandler):
         for exes_extension in exe_extensions:
             if name.endswith(exes_extension) or name.endswith(exes_extension.upper()):
                 move_file(dest_dir_exe, entry, name)
-                logging.info(f"Moved executable file: {name} to {dest_dir_exe}")
-
-    def check_pyscript_files(self, entry, name):  # * Checks all exe Files
-        for pyscript_extension in pyscript_extensions:
-            if name.endswith(pyscript_extension) or name.endswith(pyscript_extension.upper()):
-                move_file(dest_dir_pyScripts, entry, name)
-                logging.info(f"Moved executable file: {name} to {dest_dir_pyScripts}")         
+                logging.info(f"Moved executable file: {name} to {dest_dir_exe}")     
 
 # ! NO NEED TO CHANGE BELOW CODE
 if __name__ == "__main__":
